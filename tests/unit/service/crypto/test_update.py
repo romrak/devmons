@@ -3,12 +3,17 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from crypkit.core.error import CoingeckoNotFoundError, CoingeckoNotWorkingError, NotFoundError
+from crypkit.core.error import (
+    CoingeckoNotFoundError,
+    CoingeckoNotWorkingError,
+    NotFoundError,
+)
 from crypkit.core.model import CryptoCurrency, CryptoId, Symbol
 from crypkit.ports.driving.crud import UpdateRequest
 from crypkit.service.crypto import CryptoService
 
 update_request = UpdateRequest(id_=uuid.uuid4(), symbol="something")
+
 
 async def test_not_found_in_coin_gecko(
     crypto_service: CryptoService, coin_gecko: AsyncMock, repository: AsyncMock
@@ -43,28 +48,28 @@ async def test_coin_gecko_not_working(
 
 
 async def test_coin_gecko_working_but_dont_exist(
-    crypto_service: CryptoService, coin_gecko: AsyncMock, repository: AsyncMock, unit_of_work: AsyncMock
+    crypto_service: CryptoService,
+    coin_gecko: AsyncMock,
+    repository: AsyncMock,
+    unit_of_work: AsyncMock,
 ) -> None:
     with pytest.raises(NotFoundError) as context:
         # given There is a symbol with data in coin gecko
-        symbol = update_request.symbol
-        data = {
-            "some": "data",
-            "for": ["this", "symbol"],
-        }
-        expected = CryptoCurrency(id_=CryptoId(update_request.id_), symbol=Symbol(symbol), metadata=data)
         # but There is not cryptocurrency in repository
         repository.update.side_effect = NotFoundError
 
         # when we call update with the symbol
         await crypto_service.update(update_request)
 
-
     # then Exception is raised
     assert context.type == NotFoundError
 
+
 async def test_coin_gecko_working(
-    crypto_service: CryptoService, coin_gecko: AsyncMock, repository: AsyncMock, unit_of_work: AsyncMock
+    crypto_service: CryptoService,
+    coin_gecko: AsyncMock,
+    repository: AsyncMock,
+    unit_of_work: AsyncMock,
 ) -> None:
     # given There is a symbol with data in coin gecko
     symbol = update_request.symbol
@@ -72,9 +77,10 @@ async def test_coin_gecko_working(
         "some": "data",
         "for": ["this", "symbol"],
     }
-    expected = CryptoCurrency(id_=CryptoId(update_request.id_), symbol=Symbol(symbol), metadata=data)
+    expected = CryptoCurrency(
+        id_=CryptoId(update_request.id_), symbol=Symbol(symbol), metadata=data
+    )
     repository.update.return_value = expected
-
 
     # when we call update with the symbol
     it = await crypto_service.update(update_request)

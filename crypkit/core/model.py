@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 from uuid import UUID
 
 
@@ -6,28 +7,32 @@ from uuid import UUID
 class Symbol:
     chars: str
 
+
 @dataclass(frozen=True)
 class CryptoId:
     id_: UUID
 
+
 class CryptoCurrency:
     id_: CryptoId
     symbol: Symbol
-    metadata: dict
+    metadata: dict[Any, Any]
 
-    def __init__(self, id_: CryptoId, symbol: Symbol, metadata: dict) -> None:
+    def __init__(self, id_: CryptoId, symbol: Symbol, metadata: dict[Any, Any]) -> None:
         self.id_ = id_
         self.symbol = symbol
         self.metadata = metadata
 
-    def __eq__(self, other):
-        return self.id_ == other.id_
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, CryptoCurrency):
+            return self.id_ == other.id_
+        return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.id_)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.id_} {self.symbol}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.id_} {self.symbol}"

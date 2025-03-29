@@ -24,6 +24,7 @@ def unit_of_work(repository: Repository) -> UnitOfWork:
 def coin_gecko() -> CoinGecko:
     return AsyncMock(spec=CoinGecko)
 
+
 @pytest.fixture()
 def crypto_service(unit_of_work: UnitOfWork, coin_gecko: CoinGecko) -> CryptoService:
     return CryptoService(unit_of_work=unit_of_work, coin_gecko=coin_gecko)

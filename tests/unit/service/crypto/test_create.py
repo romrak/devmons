@@ -44,7 +44,10 @@ async def test_coin_gecko_not_working(
 
 
 async def test_coin_gecko_working(
-    crypto_service: CryptoService, coin_gecko: AsyncMock, repository: AsyncMock, unit_of_work: AsyncMock
+    crypto_service: CryptoService,
+    coin_gecko: AsyncMock,
+    repository: AsyncMock,
+    unit_of_work: AsyncMock,
 ) -> None:
     # given There is a symbol with data in coin gecko
     symbol = create_request.symbol
@@ -52,9 +55,10 @@ async def test_coin_gecko_working(
         "some": "data",
         "for": ["this", "symbol"],
     }
-    expected = CryptoCurrency(id_=CryptoId(create_request.id_), symbol=Symbol(symbol), metadata=data)
+    expected = CryptoCurrency(
+        id_=CryptoId(create_request.id_), symbol=Symbol(symbol), metadata=data
+    )
     repository.save.return_value = expected
-
 
     # when we call create with the symbol
     it = await crypto_service.create(create_request)
