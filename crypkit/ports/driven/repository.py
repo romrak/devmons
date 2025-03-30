@@ -18,7 +18,10 @@ class Repository(ABC):
 
     @abstractmethod
     async def save(self, crypto_currency: CryptoCurrency) -> CryptoCurrency:
-        """Save cryptocurrency to database."""
+        """Save cryptocurrency to database.
+
+        :raises DuplicityError: If the cryptocurrency already exists.
+        """
 
     @abstractmethod
     async def update(self, crypto_currency: CryptoCurrency) -> CryptoCurrency:

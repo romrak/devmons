@@ -26,8 +26,24 @@ I analysed the assignment and decided to do the following things:
 - Generate openapi documentation using FastAPI
 - Think about further improvements
 
+## Local setup
 
-## Further improvements 
+You need to install poetry and dependencies with it:
+
+```shell
+pip install poetry
+poetry install
+```
+
+## How to run tests
+
+There are multiple test levels.
+
+For unit tests you don't anything special. Just run them in you IDE.
+
+For integration tests you need running compose, so run `docker compose up --build -d` before running them.
+
+## Further improvements
 
 We can do:
 

@@ -13,6 +13,13 @@ class CryptoId:
     id_: UUID
 
 
+@dataclass(frozen=True)
+class CryptoCurrencyMemento:
+    id_: str
+    symbol: str
+    metadata: dict[Any, Any]
+
+
 class CryptoCurrency:
     id_: CryptoId
     symbol: Symbol
@@ -22,6 +29,11 @@ class CryptoCurrency:
         self.id_ = id_
         self.symbol = symbol
         self.metadata = metadata
+
+    def memento(self) -> CryptoCurrencyMemento:
+        return CryptoCurrencyMemento(
+            str(self.id_.id_), self.symbol.chars, self.metadata
+        )
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, CryptoCurrency):
