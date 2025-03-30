@@ -12,3 +12,9 @@ class CoinGecko(ABC):
         :raises CoingeckoNotFoundError: If the cryptocurrency does not exist in coingecko.
         :raises CoingeckoNotWorkingError: When Coingecko is not working.
         """
+
+    async def refresh(self) -> None:
+        """Refresh coingecko values.
+
+        :raises CoingeckoNotWorkingError: When Coingecko is not working.
+        """

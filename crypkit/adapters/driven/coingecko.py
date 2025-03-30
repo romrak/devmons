@@ -32,10 +32,15 @@ class CachedCoinGecko(CoinGecko):
     async def symbol_info(self, symbol: Symbol) -> dict[Any, Any]:
         data = await self._read_from_redis(symbol)
         if data is None:
-            data = await self._repopulate_cache(symbol)
-            if data is None:
+            values = await self._repopulate_cache()
+            filtered = list(filter(lambda x: x.symbol == symbol.chars, values))
+            if len(filtered) == 0:
                 raise CoingeckoNotFoundError()
+            return filtered[0].data
         return data
+
+    async def refresh(self) -> None:
+        await self._repopulate_cache()
 
     async def _read_from_redis(self, symbol: Symbol) -> dict[Any, Any] | None:
         value = await self._redis.get(symbol.chars)
@@ -43,13 +48,10 @@ class CachedCoinGecko(CoinGecko):
             return None
         return cast(dict[Any, Any], ujson.loads(value))
 
-    async def _repopulate_cache(self, symbol: Symbol) -> dict[Any, Any] | None:
+    async def _repopulate_cache(self) -> list[CacheValue]:
         values = await self._read_from_coin_gecko()
         await self._store_to_redis(values)
-        filtered = list(filter(lambda x: x.symbol == symbol.chars, values))
-        if len(filtered) == 0:
-            return None
-        return filtered[0].data
+        return values
 
     async def _read_from_coin_gecko(self) -> list[CacheValue]:
         response = await self._httpx.get(
