@@ -47,6 +47,7 @@ For integration tests you need running compose, so run `docker compose up --buil
 
 We can do:
 
+- run integration tests in github CI/CD using services
 - Load testing with Locust
 - Add authentication and authorization (for example with keycloack and JWT tokens)
 - Add ratelimiting
