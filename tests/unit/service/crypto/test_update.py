@@ -9,10 +9,10 @@ from crypkit.core.error import (
     NotFoundError,
 )
 from crypkit.core.model import CryptoCurrency, CryptoId, Symbol
-from crypkit.ports.driving.crud import UpdateRequest
+from crypkit.ports.driving.crud import UpdateDTO
 from crypkit.service.crypto import CryptoService
 
-update_request = UpdateRequest(id_=uuid.uuid4(), symbol="something")
+update_request = UpdateDTO(id=uuid.uuid4(), symbol="something")
 
 
 async def test_not_found_in_coin_gecko(
@@ -78,7 +78,7 @@ async def test_coin_gecko_working(
         "for": ["this", "symbol"],
     }
     expected = CryptoCurrency(
-        id_=CryptoId(update_request.id_), symbol=Symbol(symbol), metadata=data
+        id_=CryptoId(update_request.id), symbol=Symbol(symbol), metadata=data
     )
     repository.update.return_value = expected
 

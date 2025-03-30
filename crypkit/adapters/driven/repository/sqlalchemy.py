@@ -1,12 +1,13 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import RowMapping, delete, exists, insert, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from crypkit.adapters.driven.repository.schema import CryptoCurrencyTable
 from crypkit.core.error import DuplicityError, NotFoundError
-from crypkit.core.model import CryptoCurrency, CryptoId
-from crypkit.ports.driven.repository import Repository
+from crypkit.core.model import CryptoCurrency, CryptoId, Symbol
+from crypkit.ports.driven.repository import Repository, UnitOfWork
 
 
 class SqlAlchemyRepository(Repository):
@@ -68,7 +69,7 @@ class SqlAlchemyRepository(Repository):
     def _row_to_crypto_currency(row: RowMapping) -> CryptoCurrency:
         return CryptoCurrency(
             id_=CryptoId(row["id"]),
-            symbol=row["symbol"],
+            symbol=Symbol(row["symbol"]),
             metadata=row["metadata"],
         )
 
@@ -77,3 +78,20 @@ class SqlAlchemyRepository(Repository):
             select(exists().where(CryptoCurrencyTable.c.id == id_))
         )
         return bool(row_exists.scalar())
+
+
+class SqlAlchemyUnitOfWork(UnitOfWork):
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]):
+        self.session_factory = session_factory
+
+    async def __aenter__(self) -> "Repository":
+        self.session = self.session_factory()
+        self.repository = SqlAlchemyRepository(self.session)
+        return self.repository
+
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        if exc_type is not None:
+            await self.session.rollback()
+        else:
+            await self.session.commit()
+        await self.session.close()

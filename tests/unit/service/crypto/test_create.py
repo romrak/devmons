@@ -5,10 +5,10 @@ import pytest
 
 from crypkit.core.error import CoingeckoNotFoundError, CoingeckoNotWorkingError
 from crypkit.core.model import CryptoCurrency, CryptoId, Symbol
-from crypkit.ports.driving.crud import CreateRequest
+from crypkit.ports.driving.crud import CreateDTO
 from crypkit.service.crypto import CryptoService
 
-create_request = CreateRequest(id_=uuid.uuid4(), symbol="something")
+create_request = CreateDTO(id=uuid.uuid4(), symbol="something")
 
 
 async def test_not_found_in_coin_gecko(
@@ -56,7 +56,7 @@ async def test_coin_gecko_working(
         "for": ["this", "symbol"],
     }
     expected = CryptoCurrency(
-        id_=CryptoId(create_request.id_), symbol=Symbol(symbol), metadata=data
+        id_=CryptoId(create_request.id), symbol=Symbol(symbol), metadata=data
     )
     repository.save.return_value = expected
 

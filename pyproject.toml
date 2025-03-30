@@ -22,6 +22,9 @@ greenlet = "3.1.1"
 alembic = "1.15.2"
 httpx = "0.28.1"
 ujson = "5.10.0"
+fastapi = "0.115.12"
+uvicorn = "0.34.0"
+dependency-injector = "4.46.0"
 
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.0.1"
@@ -32,6 +35,7 @@ ruff = "0.9.6"
 pytest = "8.3.5"
 pytest-asyncio = "0.26.0"
 types-ujson = "5.10.0.20250326"
+fastapi = { version = "0.115.12", extras = ["standard"] }
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

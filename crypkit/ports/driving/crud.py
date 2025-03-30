@@ -1,24 +1,25 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from uuid import UUID
-
-from pydantic import BaseModel
 
 from crypkit.core.model import CryptoCurrency
 
 
-class CreateRequest(BaseModel):
-    id_: UUID
+@dataclass(frozen=True)
+class CreateDTO:
+    id: UUID
     symbol: str
 
 
-class UpdateRequest(BaseModel):
-    id_: UUID
+@dataclass(frozen=True)
+class UpdateDTO:
+    id: UUID
     symbol: str
 
 
 class CrudOperations(ABC):
     @abstractmethod
-    async def create(self, request: CreateRequest) -> CryptoCurrency:
+    async def create(self, request: CreateDTO) -> CryptoCurrency:
         """Create new CryptoCurrency.
 
         :raises CoingeckoNotFoundError: If the cryptocurrency does not exist in coingecko.
@@ -30,7 +31,7 @@ class CrudOperations(ABC):
         """List all CryptoCurrencies."""
 
     @abstractmethod
-    async def update(self, request: UpdateRequest) -> CryptoCurrency:
+    async def update(self, request: UpdateDTO) -> CryptoCurrency:
         """Update CryptoCurrency.
 
         :raises CoingeckoNotFoundError: If the cryptocurrency does not exist in coingecko.
