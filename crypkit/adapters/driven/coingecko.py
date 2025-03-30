@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import ujson
 from httpx import AsyncClient
@@ -17,7 +17,13 @@ class CacheValue:
 
 
 class CachedCoinGecko(CoinGecko):
-    def __init__(self, redis_client: Redis, httpx_client: AsyncClient, api_key: str, cache_expiration_seconds: int):
+    def __init__(
+        self,
+        redis_client: Redis,
+        httpx_client: AsyncClient,
+        api_key: str,
+        cache_expiration_seconds: int,
+    ):
         self._redis = redis_client
         self._httpx = httpx_client
         self._api_key = api_key
@@ -35,7 +41,7 @@ class CachedCoinGecko(CoinGecko):
         value = await self._redis.get(symbol.chars)
         if value is None:
             return None
-        return ujson.loads(value)
+        return cast(dict[Any, Any], ujson.loads(value))
 
     async def _repopulate_cache(self, symbol: Symbol) -> dict[Any, Any] | None:
         values = await self._read_from_coin_gecko()
@@ -47,7 +53,8 @@ class CachedCoinGecko(CoinGecko):
 
     async def _read_from_coin_gecko(self) -> list[CacheValue]:
         response = await self._httpx.get(
-            url="https://api.coingecko.com/api/v3/coins/list", headers={"x-cg-demo-api-key": self._api_key}
+            url="https://api.coingecko.com/api/v3/coins/list",
+            headers={"x-cg-demo-api-key": self._api_key},
         )
         values = []
         for coin in response.json():
