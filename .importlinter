@@ -1,0 +1,21 @@
+[importlinter]
+root_package = crypkit
+
+[importlinter:contract:core-independence]
+name = Core mustn't depend on anything
+type = forbidden
+source_modules =
+    crypkit.core
+forbidden_modules =
+    crypkit.adapters
+    crypkit.ports
+    crypkit.service
+
+[importlinter:contract:adapters-dependencies]
+name = Adapters can depend on ports and core
+type = layers
+layers =
+    crypkit.adapters
+    crypkit.service
+    crypkit.ports
+    crypkit.core

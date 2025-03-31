@@ -1,6 +1,6 @@
 VENV := PYTHONPATH="." poetry run
 
-lint: mypy black ruff
+lint: mypy black ruff imports
 lint-fix: black ruff-fix
 
 mypy:
@@ -14,3 +14,6 @@ ruff:
 
 ruff-fix:
 	$(VENV) ruff check --fix crypkit tests
+
+imports:
+	$(VENV) lint-imports
