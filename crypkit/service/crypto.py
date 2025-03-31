@@ -5,11 +5,12 @@ from crypkit.core.model import CryptoCurrency, CryptoId, Symbol
 from crypkit.ports.driven.coingecko import CoinGecko
 from crypkit.ports.driven.repository import UnitOfWork
 from crypkit.ports.driving.crud import CreateDTO, CrudOperations, UpdateDTO
+from crypkit.ports.driving.refresh import Refresh
 
 logger = logging.getLogger(__name__)
 
 
-class CryptoService(CrudOperations):
+class CryptoService(CrudOperations, Refresh):
     def __init__(self, unit_of_work: UnitOfWork, coin_gecko: CoinGecko) -> None:
         self._uow = unit_of_work
         self._coin_gecko = coin_gecko
@@ -47,3 +48,7 @@ class CryptoService(CrudOperations):
         logger.info(f"Deleting cryptocurrency: {id_}")
         async with self._uow as repository:
             return await repository.delete(CryptoId(id_))
+
+    async def refresh(self) -> None:
+        logger.info("Refreshing cryptocurrencies")
+        await self._coin_gecko.refresh()

@@ -12,6 +12,7 @@ from crypkit.ports.driven.repository import Repository, UnitOfWork
 
 logger = logging.getLogger(__name__)
 
+
 class SqlAlchemyRepository(Repository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session

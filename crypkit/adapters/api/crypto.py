@@ -26,7 +26,7 @@ router = APIRouter()
 async def create_crypto(
     request: CreateRequest,
     crud_operations: Annotated[
-        CrudOperations, Depends(Provide[CrypkitContainer.crud_operations])
+        CrudOperations, Depends(Provide[CrypkitContainer.crypto_service])
     ],
 ) -> CryptoCurrencyResponse:
     try:
@@ -48,7 +48,7 @@ async def create_crypto(
 @inject
 async def list_cryptocurrencies(
     crud_operations: Annotated[
-        CrudOperations, Depends(Provide[CrypkitContainer.crud_operations])
+        CrudOperations, Depends(Provide[CrypkitContainer.crypto_service])
     ],
 ) -> list[CryptoCurrencyResponse]:
     values = await crud_operations.read()
@@ -61,7 +61,7 @@ async def update_crypto(
     uuid: UUID,
     request: UpdateRequest,
     crud_operations: Annotated[
-        CrudOperations, Depends(Provide[CrypkitContainer.crud_operations])
+        CrudOperations, Depends(Provide[CrypkitContainer.crypto_service])
     ],
 ) -> CryptoCurrencyResponse:
     try:
@@ -82,7 +82,7 @@ async def update_crypto(
 async def delete_crypto(
     uuid: UUID,
     crud_operations: Annotated[
-        CrudOperations, Depends(Provide[CrypkitContainer.crud_operations])
+        CrudOperations, Depends(Provide[CrypkitContainer.crypto_service])
     ],
 ) -> None:
     try:

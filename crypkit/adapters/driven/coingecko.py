@@ -12,6 +12,7 @@ from crypkit.ports.driven.coingecko import CoinGecko
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass(frozen=True)
 class CacheValue:
     symbol: str

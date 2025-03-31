@@ -37,6 +37,6 @@ class CrypkitContainer(containers.DeclarativeContainer):
         cache_expiration_seconds=config.cache_expiration_seconds,
     )
 
-    crud_operations = providers.Singleton(
+    crypto_service = providers.Singleton(
         CryptoService, unit_of_work=unit_of_work, coin_gecko=coin_gecko
     )
