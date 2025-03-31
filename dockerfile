@@ -25,4 +25,4 @@ COPY alembic ./alembic
 COPY alembic.ini ./alembic.ini
 COPY crypkit ./crypkit
 
-RUN ["echo", "TODO"]
+CMD ["python", "-m", "crypkit.main"]

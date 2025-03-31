@@ -10,33 +10,25 @@ from crypkit.service.crypto import CryptoService
 
 
 class CrypkitContainer(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-        modules=["crypkit.adapters.api.crypto"]
-    )
+    wiring_config = containers.WiringConfiguration(modules=["crypkit.adapters.api.crypto"])
 
     config = providers.Configuration()
     postgres_settings = providers.Singleton(PostgresSettings)
 
-    redis_client = providers.Singleton(redis.Redis, host="localhost", port=6379, db=0)
+    redis_client = providers.Singleton(redis.Redis, host=config.redis.host, port=config.redis.port, db=config.redis.db)
     httpx_client = providers.Singleton(httpx.AsyncClient)
 
     engine = providers.Singleton(create_async_engine, url=postgres_settings().to_url())
-    session_factory = providers.Singleton(
-        async_sessionmaker, bind=engine, expire_on_commit=False
-    )
+    session_factory = providers.Singleton(async_sessionmaker, bind=engine, expire_on_commit=False)
 
-    unit_of_work = providers.Singleton(
-        SqlAlchemyUnitOfWork, session_factory=session_factory
-    )
+    unit_of_work = providers.Singleton(SqlAlchemyUnitOfWork, session_factory=session_factory)
 
     coin_gecko = providers.Singleton(
         CachedCoinGecko,
         redis_client=redis_client,
         httpx_client=httpx_client,
         api_key=config.coin_gecko_api_key,
-        cache_expiration_seconds=config.cache_expiration_seconds,
+        cache_expiration_seconds=config.redis.cache_expiration_seconds,
     )
 
-    crypto_service = providers.Singleton(
-        CryptoService, unit_of_work=unit_of_work, coin_gecko=coin_gecko
-    )
+    crypto_service = providers.Singleton(CryptoService, unit_of_work=unit_of_work, coin_gecko=coin_gecko)

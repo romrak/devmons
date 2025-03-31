@@ -38,3 +38,24 @@ services:
       interval: 5s
       retries: 5
       start_period: 10s
+
+  app:
+    build:
+      target: runtime
+    ports:
+      - "8000:8000"
+    environment:
+      CRYPKIT_POSTGRES_HOST: "postgres"
+      CRYPKIT_POSTGRES_USERNAME: "${CRYPKIT_POSTGRES_USERNAME}"
+      CRYPKIT_POSTGRES_PASSWORD: "${CRYPKIT_POSTGRES_PASSWORD}"
+      CRYPKIT_POSTGRES_DATABASE_NAME: "${CRYPKIT_POSTGRES_DATABASE_NAME}"
+      CRYPKIT_REDIS_CACHE_EXPIRATION_SECONDS: "${CRYPKIT_REDIS_CACHE_EXPIRATION_SECONDS}"
+      CRYPKIT_REDIS_HOST: "redis"
+      CRYPKIT_COIN_GECKO_API_KEY: "${CRYPKIT_COIN_GECKO_API_KEY}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres_migrations:
+        condition: service_completed_successfully
