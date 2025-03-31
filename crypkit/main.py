@@ -1,3 +1,5 @@
+import logging
+
 import uvicorn
 
 from crypkit.config import Config
@@ -5,6 +7,8 @@ from crypkit.container import CrypkitContainer
 
 container = CrypkitContainer()
 container.config.from_pydantic(Config())
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 
 def main() -> None:

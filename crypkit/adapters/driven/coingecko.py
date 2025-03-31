@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from typing import Any, cast
 
@@ -9,6 +10,7 @@ from crypkit.core.error import CoingeckoNotFoundError
 from crypkit.core.model import Symbol
 from crypkit.ports.driven.coingecko import CoinGecko
 
+logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class CacheValue:
@@ -30,8 +32,10 @@ class CachedCoinGecko(CoinGecko):
         self._cache_expiration_seconds = cache_expiration_seconds
 
     async def symbol_info(self, symbol: Symbol) -> dict[Any, Any]:
+        logger.info(f"Reading symbol info: {symbol}")
         data = await self._read_from_redis(symbol)
         if data is None:
+            logger.info(f"Symbol `{symbol}` not in cache")
             values = await self._repopulate_cache()
             filtered = list(filter(lambda x: x.symbol == symbol.chars, values))
             if len(filtered) == 0:
@@ -40,6 +44,7 @@ class CachedCoinGecko(CoinGecko):
         return data
 
     async def refresh(self) -> None:
+        logger.info("Refreshing cache")
         await self._repopulate_cache()
 
     async def _read_from_redis(self, symbol: Symbol) -> dict[Any, Any] | None:

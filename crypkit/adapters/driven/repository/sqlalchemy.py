@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 from uuid import UUID
 
@@ -9,6 +10,7 @@ from crypkit.core.error import DuplicityError, NotFoundError
 from crypkit.core.model import CryptoCurrency, CryptoId, Symbol
 from crypkit.ports.driven.repository import Repository, UnitOfWork
 
+logger = logging.getLogger(__name__)
 
 class SqlAlchemyRepository(Repository):
     def __init__(self, session: AsyncSession) -> None:
@@ -85,12 +87,15 @@ class SqlAlchemyUnitOfWork(UnitOfWork):
         self.session_factory = session_factory
 
     async def __aenter__(self) -> "Repository":
+        logger.debug("Entering new unit of work")
         self.session = self.session_factory()
         self.repository = SqlAlchemyRepository(self.session)
         return self.repository
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        logger.debug("Leaving unit of work")
         if exc_type is not None:
+            logger.debug(f"Rollback due to exception: {exc_type} - {exc_val}")
             await self.session.rollback()
         else:
             await self.session.commit()
