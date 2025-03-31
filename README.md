@@ -47,8 +47,8 @@ For integration tests you need running compose, so run `docker compose up --buil
 
 We can do:
 
-- implement acceptance tests
-- run integration and acceptance tests in github CI/CD using services
+- Implement acceptance tests
+- Run integration and acceptance tests in github CI/CD using services
 - Load testing with Locust
 - Add authentication and authorization (for example with keycloack and JWT tokens)
 - Add ratelimiting
@@ -57,3 +57,4 @@ We can do:
 - Use Terraform to describe what kind of infrastructure do we need
 - Consider using separate classes for separate use-cases
 - Use faker for faking data
+- Use structured logging
