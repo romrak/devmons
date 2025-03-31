@@ -54,6 +54,7 @@ We can do:
 - Add ratelimiting
 - Add Graphql support and separate reading from writing (CQRS)
 - Alternatives to background tasks (fast api background tasks / k8s cron jobs with entrypoints)
+- Helm charts
 - Use Terraform to describe what kind of infrastructure do we need
 - Consider using separate classes for separate use-cases
 - Use faker for faking data
